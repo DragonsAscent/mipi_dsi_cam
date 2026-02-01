@@ -182,7 +182,7 @@ esp_err_t MipiCameraWebServer::stream_handler_(httpd_req_t *req) {
   MipiCameraWebServer *server = (MipiCameraWebServer *)req->user_ctx;
 
   if (!server->camera_ || !server->camera_->is_streaming()) {
-    httpd_resp_send_err(req, HTTPD_500_SERVER_ERROR, "Camera not streaming");
+    httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Camera not streaming");
     return ESP_FAIL;
   }
 
