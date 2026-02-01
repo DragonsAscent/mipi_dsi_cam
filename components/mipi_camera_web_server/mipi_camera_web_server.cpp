@@ -182,12 +182,12 @@ esp_err_t MipiCameraWebServer::stream_handler_(httpd_req_t *req) {
   MipiCameraWebServer *server = (MipiCameraWebServer *)req->user_ctx;
 
   if (!server->camera_ || !server->camera_->is_streaming()) {
-    httpd_resp_send_err(req, HTTPD_503_SERVICE_UNAVAILABLE, "Camera not streaming");
+    httpd_resp_send_err(req, HTTPD_500_SERVER_ERROR, "Camera not streaming");
     return ESP_FAIL;
   }
 
   if (!server->camera_->capture_frame()) {
-    httpd_resp_send_err(req, HTTPD_503_SERVICE_UNAVAILABLE, "No frame");
+    httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "No frame");
     return ESP_FAIL;
   }
 
@@ -201,7 +201,7 @@ esp_err_t MipiCameraWebServer::stream_handler_(httpd_req_t *req) {
   }
 
   if (xSemaphoreTake(server->jpeg_mutex_, pdMS_TO_TICKS(500)) != pdTRUE) {
-    httpd_resp_send_err(req, HTTPD_503_SERVICE_UNAVAILABLE, "Busy");
+    httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Busy");
     return ESP_FAIL;
   }
 
@@ -232,12 +232,12 @@ esp_err_t MipiCameraWebServer::snapshot_handler_(httpd_req_t *req) {
   MipiCameraWebServer *server = (MipiCameraWebServer *)req->user_ctx;
 
   if (!server->camera_ || !server->camera_->is_streaming()) {
-    httpd_resp_send_err(req, HTTPD_503_SERVICE_UNAVAILABLE, "Camera not streaming");
+    httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Camera not streaming");
     return ESP_FAIL;
   }
 
   if (!server->camera_->capture_frame()) {
-    httpd_resp_send_err(req, HTTPD_503_SERVICE_UNAVAILABLE, "No frame");
+    httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "No frame");
     return ESP_FAIL;
   }
 
@@ -251,7 +251,7 @@ esp_err_t MipiCameraWebServer::snapshot_handler_(httpd_req_t *req) {
   }
 
   if (xSemaphoreTake(server->jpeg_mutex_, pdMS_TO_TICKS(1000)) != pdTRUE) {
-    httpd_resp_send_err(req, HTTPD_503_SERVICE_UNAVAILABLE, "Busy");
+    httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Busy");
     return ESP_FAIL;
   }
 
@@ -302,6 +302,7 @@ esp_err_t MipiCameraWebServer::control_handler_(httpd_req_t *req) {
   return ESP_FAIL;
 }
 
+#if 0
 bool MipiCameraWebServer::encode_jpeg_(const uint8_t *rgb565, size_t w, size_t h,
                                        uint8_t **jpeg_out, size_t *jpeg_size, int quality) {
   // Allouer RGB888 temporaire en PSRAM
@@ -375,6 +376,7 @@ bool MipiCameraWebServer::encode_jpeg_(const uint8_t *rgb565, size_t w, size_t h
   
   return true;
 }
+#endif
 
 void MipiCameraWebServer::rgb565_to_rgb888_(const uint8_t *rgb565, uint8_t *rgb888, size_t pixels) {
   for (size_t i = 0; i < pixels; i++) {
@@ -395,3 +397,4 @@ void MipiCameraWebServer::rgb565_to_rgb888_(const uint8_t *rgb565, uint8_t *rgb8
 
 }  // namespace mipi_camera_web_server
 }  // namespace esphome
+#endif
