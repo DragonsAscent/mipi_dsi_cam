@@ -302,7 +302,7 @@ esp_err_t MipiCameraWebServer::control_handler_(httpd_req_t *req) {
   return ESP_FAIL;
 }
 
-#if 0
+#ifdef USE_ESP32_VARIANT_ESP32P4
 bool MipiCameraWebServer::encode_jpeg_(const uint8_t *rgb565, size_t w, size_t h,
                                        uint8_t **jpeg_out, size_t *jpeg_size, int quality) {
   // Allouer RGB888 temporaire en PSRAM
